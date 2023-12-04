@@ -99,10 +99,36 @@ Game 98: 12 green, 9 red; 12 green, 10 blue, 3 red; 3 red, 13 green, 7 blue
 Game 99: 8 green, 10 blue, 1 red; 10 green, 2 red, 6 blue; 3 green, 1 blue, 1 red; 10 blue, 1 red
 Game 100: 8 blue, 6 green, 8 red; 7 red, 2 blue; 2 red, 10 green, 10 blue; 9 green, 7 red; 3 red, 7 green, 1 blue`;
 
-const game = `Game 1: 3 blue, 2 green, 6 red; 17 green, 4 red, 8 blue; 2 red, 1 green, 10 blue; 1 blue, 5 green`;
+const game = `Game 100: 8 blue, 6 green, 8 red; 7 red, 2 blue; 2 red, 10 green, 10 blue; 9 green, 7 red; 3 red, 7 green, 1 blue`;
 
 const loaded = { red: 12, green: 13, blue: 14 };
 
 // PART 1
 
+const getGameIds = (game) => {
+  const NUM_REGEX = /(\d)/;
+  const NON_WORD_REGEX = /[A-Za-z0-9]+/;
 
+  const updatedGame = game
+    .split(" ")
+    .map((e) => [...e.match(NON_WORD_REGEX)])
+    .map((e) => e[0])
+    .map((e, i, a) => {
+      if (i === 0) return false;
+      if (i === 1) return parseInt(e);
+      if (NUM_REGEX.test(e)) return false;
+      if (e === "red") return a[i - 1] > loaded.red;
+      if (e === "green") return a[i - 1] > loaded.green;
+      if (e === "blue") return a[i - 1] > loaded.blue;
+    });
+
+  if (updatedGame.some((e) => e === true)) return 0;
+  return updatedGame[1];
+};
+
+const totalIds = games
+  .split("\n")
+  .map((e) => getGameIds(e))
+  .reduce((t, c) => t + c);
+
+console.log(totalIds); // 2727
