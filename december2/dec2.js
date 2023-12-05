@@ -99,19 +99,18 @@ Game 98: 12 green, 9 red; 12 green, 10 blue, 3 red; 3 red, 13 green, 7 blue
 Game 99: 8 green, 10 blue, 1 red; 10 green, 2 red, 6 blue; 3 green, 1 blue, 1 red; 10 blue, 1 red
 Game 100: 8 blue, 6 green, 8 red; 7 red, 2 blue; 2 red, 10 green, 10 blue; 9 green, 7 red; 3 red, 7 green, 1 blue`;
 
-const game = `Game 100: 8 blue, 6 green, 8 red; 7 red, 2 blue; 2 red, 10 green, 10 blue; 9 green, 7 red; 3 red, 7 green, 1 blue`;
-
-const loaded = { red: 12, green: 13, blue: 14 };
+const game = `Game 2: 9 red, 2 green; 5 red, 1 blue, 6 green; 3 green, 13 red, 1 blue; 3 red, 6 green; 1 blue, 14 red, 6 green`;
 
 // PART 1
+const loaded = { red: 12, green: 13, blue: 14 };
 
 const getGameIds = (game) => {
   const NUM_REGEX = /(\d)/;
-  const NON_WORD_REGEX = /[A-Za-z0-9]+/;
+  const CHAR_REGEX = /[A-Za-z]+|\d+/;
 
   const updatedGame = game
     .split(" ")
-    .map((e) => [...e.match(NON_WORD_REGEX)])
+    .map((e) => [...e.match(CHAR_REGEX)])
     .map((e) => e[0])
     .map((e, i, a) => {
       if (i === 0) return false;
@@ -131,4 +130,47 @@ const totalIds = games
   .map((e) => getGameIds(e))
   .reduce((t, c) => t + c);
 
-console.log(totalIds); // 2727
+// console.log(totalIds); // 2727
+
+// PART 2
+
+const getGameIds2 = (game) => {
+  let colour = { red: 0, green: 0, blue: 0 };
+
+  const CHAR_REGEX = /[A-Za-z]+|\d+/;
+
+  game
+    .split(" ")
+    .map((e) => [...e.match(CHAR_REGEX)])
+    .map((e) => e[0])
+    .forEach((e, i, a) => {
+      if (e === "red") {
+        if (colour.red < parseInt(a[i - 1])) {
+          colour.red = parseInt(a[i - 1]);
+          // console.log("Red", colour.red);
+        }
+      }
+      if (e === "green") {
+        if (colour.green < parseInt(a[i - 1])) {
+          colour.green = parseInt(a[i - 1]);
+          // console.log("Green",colour.green);
+        }
+      }
+      if (e === "blue") {
+        if (colour.blue < parseInt(a[i - 1])) {
+          colour.blue = parseInt(a[i - 1]);
+          // console.log("Blue", colour.blue);
+        }
+      }
+    });
+
+  const power = colour.red * colour.green * colour.blue;
+  return power;
+};
+
+const totalIds2 = games
+  .split("\n")
+  .map((e) => getGameIds2(e))
+  .reduce((t, c) => t + c);
+
+console.log(totalIds2); // 56580
